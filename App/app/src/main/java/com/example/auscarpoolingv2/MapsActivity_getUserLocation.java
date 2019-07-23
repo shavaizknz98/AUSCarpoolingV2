@@ -19,6 +19,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -65,7 +66,7 @@ public class MapsActivity_getUserLocation extends FragmentActivity implements On
     private GoogleMap mMap;
 
     private ImageView chooseloc;
-
+    private boolean hasLocationAccess;
     private LatLng finalloc;
 
     @Override
@@ -78,6 +79,7 @@ public class MapsActivity_getUserLocation extends FragmentActivity implements On
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         getLocationPermission();
+        getLocationService();
 
     }
 
@@ -135,42 +137,111 @@ public class MapsActivity_getUserLocation extends FragmentActivity implements On
         });
     }
 
+    private void getLocationService(){
+        Context context = MapsActivity_getUserLocation.this;
+        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch(Exception ex) {}
+
+        if(!gps_enabled) {
+            // notify user
+            new AlertDialog.Builder(context)
+                    .setMessage("Enable Location Services")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                            context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+
+                        }
+                    })
+                    .setNegativeButton("NO",null)
+                    .show();
+        }
+    }
+
+    private boolean checkMapServices(){
+        if(isMapsEnabled()){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if(checkMapServices()){
+            if(mLocationPermissionGranted){
+                initMap();
+            }else{
+                getLocationPermission();
+            }
+        }
+    }
 
     private void getLocationPermission() {
-        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            if (ContextCompat.checkSelfPermission(this.getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mLocationPermissionGranted = true;
-                initMap();
-            } else {
-                ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
-            }
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
+            initMap();
         } else {
-            ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions((Activity) getApplicationContext(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
+    }
+
+    public boolean isMapsEnabled(){
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if(!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            buildAlertMessageNoGPS();
+            return false;
+        }
+        return true;
+
+    }
+
+    private void buildAlertMessageNoGPS(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("This Appp requires GPS to work properly, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent enableGPSIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(enableGPSIntent, PERMISSIONS_REQUEST_ENABLE_GPS);
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         mLocationPermissionGranted = false;
-
         switch (requestCode) {
-            case LOCATION_PERMISSION_REQUEST_CODE:
-                if (grantResults.length > 0) {
-                    for (int i = 0; i < grantResults.length; i++) {
-                        if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                            mLocationPermissionGranted = false;
-                            return;
-                        }
-                    }
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:{
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
                     mLocationPermissionGranted = true;
-                    //init map
-                    initMap();
                 }
+            }
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ENABLE_GPS:
+                if (mLocationPermissionGranted) {
+                    initMap();
+                }else{
+                    getLocationPermission();
+                }
+        }
+    }
     private void initMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
