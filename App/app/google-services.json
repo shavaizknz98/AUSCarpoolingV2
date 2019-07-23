@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "1045655010476",
+    "firebase_url": "https://auscarpoolingv2.firebaseio.com",
+    "project_id": "auscarpoolingv2",
+    "storage_bucket": "auscarpoolingv2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1045655010476:android:e061fd402c23cdfa",
+        "android_client_info": {
+          "package_name": "com.example.auscarpoolingv2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1045655010476-r0fqlf7fovcdcl33d2kg35jc5qpkbs7e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.auscarpoolingv2",
+            "certificate_hash": "2ddc4965a0d8a4649d2b876f2994d9857948b83d"
+          }
+        },
+        {
+          "client_id": "1045655010476-bp3b7sr0lt9fmq4dgh1gcrmfm3kcmfcc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.auscarpoolingv2",
+            "certificate_hash": "5110347beb78492c859da9da169b6c97e8230f3f"
+          }
+        },
+        {
+          "client_id": "1045655010476-dmin1man9ckc40hnrciiucaqhfbdfedm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIbvEo1g2rIW9XgZUrXbFPZ0h6SpgCk24"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1045655010476-dmin1man9ckc40hnrciiucaqhfbdfedm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

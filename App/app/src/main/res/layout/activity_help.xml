@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HelpActivity">
+
+    <TextView
+        android:id="@+id/helpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:textSize="16sp"
+        android:text="Welcome to AUS carpooling app \n
+• What can you do here? \n
+	• Provide a ride!\n
+                • Enter your gender preference \n
+                • Enter your source and destination\n
+                • Pick your date and time\n
+                • Enjoy the ride!!!\n
+\n
+\n
+	• Find a ride!\n
+                • Enter your gender preference \n
+                • Enter your source and destination\n
+                • Pick your date and time\n
+                • Select your driver!\n
+                • Enjoy the ride!!!\n
+\n
+\n
+	• Edit your profile!\n
+                • Enter your new details\n
+\n
+\n
+	• Rate a driver!\n
+                • Enter the driver's phone number\n
+                • Rate the driver!\n	"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.05" />
+</androidx.constraintlayout.widget.ConstraintLayout>
