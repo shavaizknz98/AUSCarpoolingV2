@@ -75,13 +75,20 @@ public class UserMainPageActivity extends AppCompatActivity {
         btnSignOut = (Button) findViewById(R.id.signOutMPButton);
         btnStopProviding = (Button) findViewById(R.id.stopProvidingBtn);
         welcomeUser = (TextView) findViewById(R.id.welcomeBackText);
+        mProgress.setMessage("Just a moment, Setting up the App for you");
+        mProgress.show();
 
-
+        btnRateDriver.setVisibility(View.GONE);
+        btnEditProfile.setVisibility(View.GONE);
+        btnFindRide.setVisibility(View.GONE);
+        btnHelp.setVisibility(View.GONE);
+        btnProvideRide.setVisibility(View.GONE);
+        btnSignOut.setVisibility(View.GONE);
+        btnStopProviding.setVisibility(View.GONE);
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mProgress.setMessage("Retrieving User Information");
-                mProgress.show();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Users user = new Users();
                     user.setName(ds.child(userID).getValue(Users.class).getName());
@@ -89,10 +96,18 @@ public class UserMainPageActivity extends AppCompatActivity {
                     user.setRating(ds.child(userID).getValue(Users.class).getRating());
                     Double myRating = Math.floor(user.getRating() * 100)/100;
                     welcomeUser.setText("Welcome back, " + user.getName() + "! \nYour rating is: " + myRating);
-                    mProgress.dismiss();
-                }
-            }
 
+                }
+                mProgress.dismiss();
+
+                btnRateDriver.setVisibility(View.VISIBLE);
+                btnEditProfile.setVisibility(View.VISIBLE);
+                btnFindRide.setVisibility(View.VISIBLE);
+                btnHelp.setVisibility(View.VISIBLE);
+                btnProvideRide.setVisibility(View.VISIBLE);
+                btnSignOut.setVisibility(View.VISIBLE);
+                btnStopProviding.setVisibility(View.VISIBLE);
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
