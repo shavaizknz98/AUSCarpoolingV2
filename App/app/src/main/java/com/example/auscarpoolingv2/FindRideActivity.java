@@ -202,10 +202,8 @@ public class FindRideActivity extends AppCompatActivity implements DatePickerDia
                     double [] locdata = data.getDoubleArrayExtra("Location");
                     userloc = new LatLng(locdata[0], locdata[1]);
                     Log.d("onActivityResult", "Lat:" + userloc.latitude + " Long:" + userloc.longitude);
-                    makeToast("Lat:" + userloc.latitude + " Long:" + userloc.longitude);
                 } else {
                     Log.d("onActivityResult", "Activity cancelled");
-                    makeToast("Activity cancelled");
                 }
                 break;
         }

@@ -79,7 +79,6 @@ public class MapsActivity_getUserLocation extends FragmentActivity implements On
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         getLocationPermission();
-        getLocationService();
 
     }
 
@@ -100,7 +99,6 @@ public class MapsActivity_getUserLocation extends FragmentActivity implements On
             Log.d(TAG, address.toString());
             mMap.clear();
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM, address.getAddressLine(0));
-            //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
 
             finalloc = new LatLng(address.getLatitude(), address.getLongitude());
         }
@@ -137,43 +135,10 @@ public class MapsActivity_getUserLocation extends FragmentActivity implements On
         });
     }
 
-    private void getLocationService(){
-        Context context = MapsActivity_getUserLocation.this;
-        LocationManager lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
-
-        try {
-            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {}
-
-        if(!gps_enabled) {
-            // notify user
-            new AlertDialog.Builder(context)
-                    .setMessage("Enable Location Services")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                            context.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-
-                        }
-                    })
-                    .setNegativeButton("NO",null)
-                    .show();
-        }
-    }
-
-    private boolean checkMapServices(){
-        if(isMapsEnabled()){
-            return true;
-        }
-        return false;
-    }
-
     @Override
     protected void onResume(){
         super.onResume();
-        if(checkMapServices()){
+        if(isMapsEnabled()){
             if(mLocationPermissionGranted){
                 initMap();
             }else{
@@ -186,8 +151,6 @@ public class MapsActivity_getUserLocation extends FragmentActivity implements On
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
             initMap();
-        } else {
-            ActivityCompat.requestPermissions((Activity) getApplicationContext(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
     }
 
@@ -202,9 +165,22 @@ public class MapsActivity_getUserLocation extends FragmentActivity implements On
 
     }
 
+    public boolean isMapsEnabledNoAlert(){
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if(!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            //buildAlertMessageNoGPS();
+            return false;
+        }
+        return true;
+
+    }
+
+
+
     private void buildAlertMessageNoGPS(){
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("This Appp requires GPS to work properly, do you want to enable it?")
+        builder.setMessage("This App requires GPS to work properly, do you want to enable it?")
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
@@ -215,6 +191,33 @@ public class MapsActivity_getUserLocation extends FragmentActivity implements On
                 });
         final AlertDialog alert = builder.create();
         alert.show();
+    }
+    public boolean isServicesOK(){
+        Log.d(TAG, "Checking google services");
+
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(MapsActivity_getUserLocation.this);
+
+        if(available == ConnectionResult.SUCCESS) {
+            Log.d(TAG, "Services Running Fine");
+            return true;
+        }
+        else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+            Log.d(TAG, "An Error occurred but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(MapsActivity_getUserLocation.this, available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        }else{
+            Toast.makeText(this,"You can't make map requests", Toast.LENGTH_SHORT).show();
+        }
+        return false;
+    }
+    private boolean checkMapServices(){
+        if(isServicesOK()){
+            if(isMapsEnabledNoAlert()){
+                return true;
+            }
+        }
+        return false;
+
     }
 
     @Override
@@ -230,6 +233,8 @@ public class MapsActivity_getUserLocation extends FragmentActivity implements On
         }
     }
 
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -243,9 +248,11 @@ public class MapsActivity_getUserLocation extends FragmentActivity implements On
         }
     }
     private void initMap() {
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        if(isMapsEnabledNoAlert() &&  ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.map);
+            mapFragment.getMapAsync(this);
+        }
     }
 
     private void getDeviceLocation() {
@@ -296,7 +303,6 @@ public class MapsActivity_getUserLocation extends FragmentActivity implements On
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
-        Toast.makeText(this, "Map ready", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onMapReady: Map ready");
 
         if (mLocationPermissionGranted) {

@@ -2,9 +2,14 @@ package com.example.auscarpoolingv2;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +23,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import static com.example.auscarpoolingv2.Constants.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
+import static com.example.auscarpoolingv2.Constants.PERMISSIONS_REQUEST_ENABLE_GPS;
+
+
 
 public class UserMainPageActivity extends AppCompatActivity {
 
@@ -33,6 +43,12 @@ public class UserMainPageActivity extends AppCompatActivity {
     String current_user, fullname;
     String userID;
     private TextView ratingText;
+    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
+    public static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
+    private boolean mLocationPermissionGranted = false;
+
+
 
     private ProgressDialog mProgress;
 
@@ -145,8 +161,42 @@ public class UserMainPageActivity extends AppCompatActivity {
             }
         });
 
+        getLocationPermission();
+
     }
 
+    private void getLocationPermission() {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLocationPermissionGranted = true;
+        } else {
+            ActivityCompat.requestPermissions( UserMainPageActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        mLocationPermissionGranted = false;
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:{
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    mLocationPermissionGranted = true;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ENABLE_GPS:
+                if (mLocationPermissionGranted) {
+                }else{
+                    getLocationPermission();
+                }
+        }
+    }
 
     //make a toast
     private void makeToast(String msg) {
