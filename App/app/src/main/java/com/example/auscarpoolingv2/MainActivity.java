@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                                 Intent gotoUserPage = new Intent(MainActivity.this, UserMainPageActivity.class);
                                 gotoUserPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(gotoUserPage);
+                                finish();
                             } else {
                                 makeToast("Could not sign in user");
                                 mProgress.dismiss();
