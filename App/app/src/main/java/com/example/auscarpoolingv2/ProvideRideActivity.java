@@ -236,7 +236,7 @@ public class ProvideRideActivity extends AppCompatActivity implements DatePicker
         mMonth = month;
         mYear = year;
         datestr = day_of_month + "/" + month + "/" + year;
-        txtDate.setText(datestr);
+        txtDate.setText(day_of_month+" / " + month + " / " + year);
     }
 
     @Override

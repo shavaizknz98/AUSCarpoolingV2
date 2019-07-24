@@ -61,7 +61,9 @@ public class SignUpActivity extends AppCompatActivity {
         if(email != "" || pass != "" || name != "" || phone != "") {
 
             mProgress.setMessage("Signing up");
+            mProgress.setCancelable(false);
             mProgress.show();
+
 
             mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override

@@ -4,7 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,14 +19,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class findRideList extends AppCompatActivity {
     private TextView resultText;
     private String result = "";
     private ProgressDialog mProgress;
+    private boolean foundDrivers = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,22 +40,49 @@ public class findRideList extends AppCompatActivity {
         getSupportActionBar().setBackgroundDrawable(getDrawable(R.color.colorAccent));
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("Finding Riders");
+        mProgress.setCancelable(false);
         mProgress.show();
         resultText = (TextView) findViewById(R.id.resultText);
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference usersRef = rootRef.child("Users");
 
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            String address; // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+            String knownName;
+            String postalCode;
+            String country;
+            String state;
+            String city;
+            Geocoder geocoder;
+            List<Address> addresses = null;
+            String name;
+            String phoneNumber;
+            String rideTime;
+            String rideDate;
+            String rideGender;
+            SimpleDateFormat format;
+            Date listDate;
+            Date choosenDate;
+            String dateString;
+            Double latitude;
+            Double longitude;
+            boolean providingRide;
+
+
+
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    boolean providingRide = ds.child("providing").getValue(boolean.class);
-                    String rideDate = ds.child("date").getValue(String.class);
-                    String rideGender = ds.child("genderpref").getValue(String.class);
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                    Date listDate = null;
-                    Date choosenDate = null;
-                    String dateString = format.format(new Date());
+                    providingRide = ds.child("providing").getValue(boolean.class);
+                    rideDate = ds.child("date").getValue(String.class);
+                    rideGender = ds.child("genderpref").getValue(String.class);
+                    format = new SimpleDateFormat("yyyy-MM-dd");
+                    listDate = null;
+                    choosenDate = null;
+                    dateString = format.format(new Date());
+                    latitude = ds.child("latitude").getValue(Double.class);
+                    longitude = ds.child("longitude").getValue(Double.class);
+
                     try {
                         listDate = format.parse(rideDate);
                     } catch (ParseException e) {
@@ -60,16 +94,42 @@ public class findRideList extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     if (providingRide == true && listDate.equals(choosenDate) && rideGender.equals(FindRideActivity.genderPref)) {
-                        String name = ds.child("name").getValue(String.class);
-                        String phoneNumber = ds.child("phone").getValue(String.class);
-                        String rideTime = ds.child("time").getValue(String.class);
-                        result += name + "\n\tContact: " + phoneNumber + "\n\tTime And Date: " + rideTime + " " + rideDate
-                                + "\n\n";
 
-                        mProgress.dismiss();
+                        name = ds.child("name").getValue(String.class);
+
+                        phoneNumber = ds.child("phone").getValue(String.class);
+                        rideTime = ds.child("time").getValue(String.class);
+
+                        geocoder = new Geocoder(findRideList.this,Locale.getDefault());
+
+
+                        try {
+                            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        address = addresses.get(0).getAddressLine(0);
+                        city = addresses.get(0).getLocality();
+                        state = addresses.get(0).getAdminArea();
+                        country = addresses.get(0).getCountryName();
+
+                        postalCode = addresses.get(0).getPostalCode();
+                        knownName = addresses.get(0).getFeatureName();
+                        result += name + "\n\tContact: " + phoneNumber + "\n\tTime And Date: " + rideTime + ", " + rideDate
+                                + "\n\n" + address;
+                        foundDrivers = true;
+
+
                         resultText.setText(result);
+
+                        Linkify.addLinks(resultText,Linkify.ALL);
                     }
                 }
+                if(!foundDrivers){
+                    resultText.setText("No Drivers Found");
+                }
+                mProgress.dismiss();
             }
 
             @Override

@@ -238,7 +238,7 @@ public class FindRideActivity extends AppCompatActivity implements DatePickerDia
         mMonth = month;
         mYear = year;
         datestr = year+"-"+ month+"-"+ day_of_month;
-        txtDate.setText(datestr);
+        txtDate.setText(day_of_month+" / " + month + " / " + year);
     }
 
     @Override

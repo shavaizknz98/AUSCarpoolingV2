@@ -42,7 +42,6 @@ public class UserMainPageActivity extends AppCompatActivity {
     private Button btnStopProviding;
     String current_user, fullname;
     String userID;
-    private TextView ratingText;
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     public static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
@@ -69,13 +68,13 @@ public class UserMainPageActivity extends AppCompatActivity {
         btnEditProfile = (Button) findViewById(R.id.editProfileButton);
         btnFindRide = (Button) findViewById(R.id.findRideButton);
         btnProvideRide = (Button) findViewById(R.id.provideRideButton);
-        ratingText = (TextView) findViewById(R.id.ratingText);
         btnRateDriver = (Button) findViewById(R.id.rateDriverBtn);
         btnHelp = (Button) findViewById(R.id.helpButton);
         btnSignOut = (Button) findViewById(R.id.signOutMPButton);
         btnStopProviding = (Button) findViewById(R.id.stopProvidingBtn);
         welcomeUser = (TextView) findViewById(R.id.welcomeBackText);
         mProgress.setMessage("Just a moment, Setting up the App for you");
+        mProgress.setCancelable(false);
         mProgress.show();
 
         btnRateDriver.setVisibility(View.GONE);
