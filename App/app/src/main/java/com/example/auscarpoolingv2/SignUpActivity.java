@@ -79,7 +79,7 @@ public class SignUpActivity extends AppCompatActivity {
                         current_user_db.child("genderpref").setValue("a");
                         current_user_db.child("providing").setValue(false);
                         current_user_db.child("date").setValue("1970-01-01");//year-month-day
-                        current_user_db.child("time").setValue("00-00");//hour-min
+                        current_user_db.child("time").setValue("00:00");//hour:min
                         current_user_db.child("latitude").setValue(0.0);
                         current_user_db.child("longitude").setValue(0.0);
                         current_user_db.child("rating").setValue(0.0);

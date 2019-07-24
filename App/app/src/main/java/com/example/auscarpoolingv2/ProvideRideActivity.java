@@ -157,7 +157,7 @@ public class ProvideRideActivity extends AppCompatActivity implements DatePicker
                     mDatabase.child("genderpref").setValue(genderPref);
                     mDatabase.child("providing").setValue(true);
                     mDatabase.child("date").setValue(mYear + "-" + mMonth + "-" + mDay);//year-month-day
-                    mDatabase.child("time").setValue(mHour + "-" + mMinute);//hour-min
+                    mDatabase.child("time").setValue(mHour + ":" + mMinute);//hour-min
                     mDatabase.child("latitude").setValue(userloc.latitude);
                     mDatabase.child("longitude").setValue(userloc.longitude);
 
