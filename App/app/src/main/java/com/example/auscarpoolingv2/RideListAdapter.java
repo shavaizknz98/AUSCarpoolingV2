@@ -44,9 +44,13 @@ public class RideListAdapter extends RecyclerView.Adapter<RideListAdapter.MyView
     public void onBindViewHolder(MyViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.textView.setText(rideList.get(position).getAllDetails());
-        Log.d("HELLOHELLO", rideList.get(position).getName());
-        Linkify.addLinks(holder.textView,Linkify.ALL);
+        if(rideList.size() ==0){
+            holder.textView.setText("No Drivers Found");
+        }else{
+            holder.textView.setText(rideList.get(position).getAllDetails());
+            Log.d("HELLOHELLO", rideList.get(position).getName());
+            Linkify.addLinks(holder.textView,Linkify.ALL);
+        }
 
     }
 

@@ -132,9 +132,10 @@ public class findRideList extends AppCompatActivity {
                     }
                 }
                 if(!foundDrivers){
-                    resultText.setText("No Drivers Found");
+
                     Log.d("HELLOHELLO", "No riders!");
                     Toast.makeText(findRideList.this, "No drivers found!", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
                 mProgress.dismiss();
                 //----------------------END OF SETUP-----------------------------------------------
@@ -149,7 +150,6 @@ public class findRideList extends AppCompatActivity {
                 recyclerView.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();
                 Log.d("HELLOHELLO", "SIZE*** =" + rideList.size());
-                Toast.makeText(findRideList.this, "Set up lists", Toast.LENGTH_SHORT).show();
 
                 DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
                 recyclerView.addItemDecoration(dividerItemDecoration);
