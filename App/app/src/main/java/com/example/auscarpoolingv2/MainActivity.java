@@ -14,9 +14,13 @@ import com.google.firebase.auth.FirebaseUser;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText mEmail, mPassword;
     private Button btnSignIn;
     private Button btnSignUp;
+    private CheckBox checkBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         mPassword = (EditText) findViewById(R.id.passwordText);
         btnSignIn = (Button) findViewById(R.id.signInButton);
         btnSignUp = (Button) findViewById(R.id.signupButton);
+        checkBox = (CheckBox) findViewById(R.id.checkBox);
 
         mProgress = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
@@ -68,11 +74,26 @@ public class MainActivity extends AppCompatActivity {
 
         };
 
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (!isChecked) {
+                    // show password
+                    mPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                } else {
+                    // hide password
+                    mPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+
+                }
+            }
+        });
+
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = mEmail.getText().toString();
                 String pass = mPassword.getText().toString();
+
                 mProgress.setMessage("Signing In");
                 mProgress.show();
                 if (email != "" && pass != "") {
