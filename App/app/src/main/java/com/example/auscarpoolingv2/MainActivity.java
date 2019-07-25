@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ProgressDialog mProgress;
+    private TextView mForgotPassword;
 
     private EditText mEmail, mPassword;
     private Button btnSignIn;
@@ -48,10 +50,37 @@ public class MainActivity extends AppCompatActivity {
         checkBox = (CheckBox) findViewById(R.id.checkBox);
 
         mProgress = new ProgressDialog(this);
+        mProgress.setCancelable(false);
         mAuth = FirebaseAuth.getInstance();
+        mForgotPassword = (TextView) findViewById(R.id.forgotPassword);
+        mForgotPassword.setOnClickListener(new View.OnClickListener() {
 
+            @Override
+            public void onClick(View v) {
+
+                mProgress.show();
+                mProgress.setMessage("Checking Account...");
+                mProgress.setCancelable(false);
+                if (mEmail.getText().toString().trim() == "") {
+                    makeToast("Use a valid Email");
+                }
+                else{
+                    mAuth.sendPasswordResetEmail(mEmail.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                makeToast("Password reset link sent on email address");
+                            } else {
+                                makeToast("Could not reset password, please use a valid email address");
+                            }
+                        }
+                    });}
+                mProgress.dismiss();
+            }});
+
+        mProgress.show();
+        mProgress.setMessage("Checking Account...");
         mAuthListener = new FirebaseAuth.AuthStateListener() {
-
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 //go to register page if user is null?
@@ -63,12 +92,10 @@ public class MainActivity extends AppCompatActivity {
                     //if user is signed in then go to main menu directly
                     Intent gotoUserMainMenu = new Intent(MainActivity.this, UserMainPageActivity.class);
                     gotoUserMainMenu.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    mProgress.dismiss();
                     startActivity(gotoUserMainMenu);
-                } else {
-                    //user is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                    makeToast("Signed out.");
                 }
+                mProgress.dismiss();
             }
 
 
@@ -91,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = mEmail.getText().toString();
-                String pass = mPassword.getText().toString();
+                String email = mEmail.getText().toString().trim();
+                String pass = mPassword.getText().toString().trim();
 
                 mProgress.setMessage("Signing In");
                 mProgress.show();
@@ -106,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
                                 Intent gotoUserPage = new Intent(MainActivity.this, UserMainPageActivity.class);
                                 gotoUserPage.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(gotoUserPage);
-                                finish();
                             } else {
                                 makeToast("Could not sign in user");
                                 mProgress.dismiss();

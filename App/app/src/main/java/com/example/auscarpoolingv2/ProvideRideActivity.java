@@ -29,7 +29,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import static com.example.auscarpoolingv2.Constants.ERROR_DIALOG_REQUEST;
 
@@ -51,6 +55,7 @@ public class ProvideRideActivity extends AppCompatActivity implements DatePicker
     private int mHour = -1, mMinute = -1;
     private String datestr;
     private String timestr;
+    private boolean correctDate;
 
     private String genderPref = "a";
     private boolean toAUS = false;
@@ -147,12 +152,30 @@ public class ProvideRideActivity extends AppCompatActivity implements DatePicker
                 //progress dialog here
                 mProgress.setMessage("Confirming");
                 mProgress.show();
-                if (userloc == null
+                mProgress.setCancelable(false);
+                Date parsed = null;
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+                try {
+                    parsed = (Date) sdf.parse(String.valueOf(mYear+"/" +mMonth +"/" +mDay));
+                }catch (ParseException p){
+                    Log.d(TAG, "onClick: Parse Exception");
+
+                }
+                if(getZeroTimeDate(new Date()).compareTo(parsed) < 1){
+                    correctDate = true;
+                }else{
+                    correctDate = false;
+                }
+                if(!correctDate){
+                    makeToast("Please enter a valid date");
+                    mProgress.dismiss();
+
+                } else if (userloc == null
                         || mMinute == -1 || mHour == -1
                         || mDay == -1 || mMonth == -1 || mYear == -1) {
                     mProgress.dismiss();
                     makeToast("Please input all required fields!");
-                } else {
+                }else {
                     mDatabase.child("toAUS").setValue(toAUS);
                     mDatabase.child("genderpref").setValue(genderPref);
                     mDatabase.child("providing").setValue(true);
@@ -254,6 +277,21 @@ public class ProvideRideActivity extends AppCompatActivity implements DatePicker
 
     private void makeToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    public static Date getZeroTimeDate(Date fecha) {
+        Date res = fecha;
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.setTime( fecha );
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        res = calendar.getTime();
+
+        return res;
     }
 
 }
