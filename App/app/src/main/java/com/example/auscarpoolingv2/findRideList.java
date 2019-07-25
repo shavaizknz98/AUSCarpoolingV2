@@ -2,13 +2,19 @@ package com.example.auscarpoolingv2;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.text.Layout;
 import android.text.util.Linkify;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,15 +28,25 @@ import com.google.firebase.database.ValueEventListener;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+
 public class findRideList extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+
+
     private TextView resultText;
     private String result = "";
     private ProgressDialog mProgress;
     private boolean foundDrivers = false;
+
+    private ArrayList<RideList> rideList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,17 +58,16 @@ public class findRideList extends AppCompatActivity {
         mProgress.setMessage("Finding Riders");
         mProgress.setCancelable(false);
         mProgress.show();
-        resultText = (TextView) findViewById(R.id.resultText);
+
+        rideList = new ArrayList<RideList>();
+
+        //---------------SETUP OF LIST----------------------------------------------
+        //resultText = (TextView) findViewById(R.id.resultText);
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference usersRef = rootRef.child("Users");
 
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             String address; // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-            String knownName;
-            String postalCode;
-            String country;
-            String state;
-            String city;
             Geocoder geocoder;
             List<Address> addresses = null;
             String name;
@@ -67,8 +82,6 @@ public class findRideList extends AppCompatActivity {
             Double latitude;
             Double longitude;
             boolean providingRide;
-
-
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -96,13 +109,10 @@ public class findRideList extends AppCompatActivity {
                     if (providingRide == true && listDate.equals(choosenDate) && rideGender.equals(FindRideActivity.genderPref)) {
 
                         name = ds.child("name").getValue(String.class);
-
                         phoneNumber = ds.child("phone").getValue(String.class);
                         rideTime = ds.child("time").getValue(String.class);
 
                         geocoder = new Geocoder(findRideList.this,Locale.getDefault());
-
-
                         try {
                             addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
                         } catch (IOException e) {
@@ -110,33 +120,45 @@ public class findRideList extends AppCompatActivity {
                         }
 
                         address = addresses.get(0).getAddressLine(0);
-                        city = addresses.get(0).getLocality();
-                        state = addresses.get(0).getAdminArea();
-                        country = addresses.get(0).getCountryName();
-
-                        postalCode = addresses.get(0).getPostalCode();
-                        knownName = addresses.get(0).getFeatureName();
                         result += name + "\n\tContact: " + phoneNumber + "\n\tTime And Date: " + rideTime + ", " + rideDate
                                 + "\n\n" + address;
+                        Log.d("HELLOHELLO", result);
                         foundDrivers = true;
+                        Log.d("HELLOHELLO", "ADDING_>" + name );
+                        rideList.add(new RideList(name, phoneNumber, rideDate, rideTime, address));
 
-
-                        resultText.setText(result);
-
-                        Linkify.addLinks(resultText,Linkify.ALL);
+                        //resultText.setText(result);
+                        //Linkify.addLinks(resultText,Linkify.ALL);
                     }
                 }
                 if(!foundDrivers){
                     resultText.setText("No Drivers Found");
+                    Log.d("HELLOHELLO", "No riders!");
+                    Toast.makeText(findRideList.this, "No drivers found!", Toast.LENGTH_SHORT).show();
                 }
                 mProgress.dismiss();
+                //----------------------END OF SETUP-----------------------------------------------
+
+                //do recyclerview here
+                recyclerView = (RecyclerView) findViewById(R.id.ridelist_recycler_view);
+                layoutManager = new LinearLayoutManager(findRideList.this);
+                recyclerView.setHasFixedSize(true);
+
+                recyclerView.setLayoutManager(layoutManager);
+                mAdapter = new RideListAdapter(rideList);
+                recyclerView.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
+                Log.d("HELLOHELLO", "SIZE*** =" + rideList.size());
+                Toast.makeText(findRideList.this, "Set up lists", Toast.LENGTH_SHORT).show();
+
+                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
+                recyclerView.addItemDecoration(dividerItemDecoration);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
 
         });
+
     }
 }
