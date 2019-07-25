@@ -6,8 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,7 +30,7 @@ public class SignUpActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
 
     private ProgressDialog mProgress;
-
+    private CheckBox checkBox;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,8 +45,23 @@ public class SignUpActivity extends AppCompatActivity {
         mName = (EditText) findViewById(R.id.signUpName);
         mPhone = (EditText) findViewById(R.id.signUpPhone);
         btnSignUpUser = (Button) findViewById(R.id.signUpUser);
+        checkBox = (CheckBox) findViewById(R.id.checkBox2);
 
         mProgress = new ProgressDialog(this);
+
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (!isChecked) {
+                    // show password
+                    mPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                } else {
+                    // hide password
+                    mPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+
+                }
+            }
+        });
 
         btnSignUpUser.setOnClickListener(new View.OnClickListener() {
             @Override
