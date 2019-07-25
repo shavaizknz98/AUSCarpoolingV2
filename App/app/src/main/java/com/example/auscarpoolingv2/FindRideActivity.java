@@ -196,6 +196,7 @@ public class FindRideActivity extends AppCompatActivity implements DatePickerDia
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
         switch(requestCode) {
             case REQUEST_LOCATION_CODE:
                 if(resultCode == Activity.RESULT_OK) {
@@ -217,6 +218,7 @@ public class FindRideActivity extends AppCompatActivity implements DatePickerDia
                 Calendar.getInstance().get(Calendar.MONTH),
                 Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
         );
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
         datePickerDialog.show();
     }
 
@@ -226,8 +228,7 @@ public class FindRideActivity extends AppCompatActivity implements DatePickerDia
                 this,
                 Calendar.getInstance().get(Calendar.HOUR),
                 Calendar.getInstance().get(Calendar.MINUTE),
-                DateFormat.is24HourFormat(this)
-        );
+                false);
         timePickerDialog.show();
     }
 
