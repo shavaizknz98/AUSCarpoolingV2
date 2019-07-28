@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 mProgress.show();
                 mProgress.setMessage("Checking Account...");
                 mProgress.setCancelable(false);
-                if (mEmail.getText().toString().trim() == "") {
+                if (mEmail.getText().toString().trim().isEmpty()){
                     makeToast("Use a valid Email");
                 }
                 else{
