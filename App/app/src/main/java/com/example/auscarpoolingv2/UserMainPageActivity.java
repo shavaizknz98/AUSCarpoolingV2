@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -95,7 +96,13 @@ public class UserMainPageActivity extends AppCompatActivity {
                     user.setName(ds.child(userID).getValue(Users.class).getName());
                     user.setPhonenum(ds.child(userID).getValue(Users.class).getPhonenum());
                     user.setRating(ds.child(userID).getValue(Users.class).getRating());
+                    user.setProviding(ds.child(userID).getValue(Users.class).isProviding());
                     Double myRating = Math.floor(user.getRating() * 100)/100;
+                    if(user.isProviding()){
+                        btnStopProviding.setVisibility(View.VISIBLE);
+                    }else{
+                        btnStopProviding.setVisibility(View.GONE);
+                    }
                     welcomeUser.setText("Welcome back, " + user.getName() + "! \nYour rating is: " + myRating);
 
                 }
@@ -107,7 +114,6 @@ public class UserMainPageActivity extends AppCompatActivity {
                 btnHelp.setVisibility(View.VISIBLE);
                 btnProvideRide.setVisibility(View.VISIBLE);
                 btnSignOut.setVisibility(View.VISIBLE);
-                btnStopProviding.setVisibility(View.VISIBLE);
             }
 
             @Override

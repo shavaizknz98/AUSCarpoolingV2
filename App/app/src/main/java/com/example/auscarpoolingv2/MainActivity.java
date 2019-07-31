@@ -3,6 +3,7 @@ package com.example.auscarpoolingv2;
 import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -18,6 +19,8 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -118,12 +121,17 @@ public class MainActivity extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = mEmail.getText().toString().trim();
-                String pass = mPassword.getText().toString().trim();
+
 
                 mProgress.setMessage("Signing In");
                 mProgress.show();
-                if (email != "" && pass != "") {
+                if (mEmail.getText().toString().trim().isEmpty() || mPassword.getText().toString().trim().isEmpty()){
+                    makeToast("Please enter a valid email and password!");
+                    mProgress.dismiss();
+                    return;
+                }else{
+                    String email = mEmail.getText().toString().trim();
+                    String pass = mPassword.getText().toString().trim();
                     mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -139,8 +147,6 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     });
-                } else {
-                    makeToast("Please enter a valid email and password!");
                 }
             }
         });
