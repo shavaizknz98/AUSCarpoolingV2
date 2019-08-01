@@ -100,6 +100,9 @@ public class UserMainPageActivity extends AppCompatActivity {
                     Double myRating = Math.floor(user.getRating() * 100)/100;
                     if(user.isProviding()){
                         btnStopProviding.setVisibility(View.VISIBLE);
+                        ProvidingNotification pn = new ProvidingNotification(UserMainPageActivity.this);
+                        pn.showNotification();
+
                     }else{
                         btnStopProviding.setVisibility(View.GONE);
                     }
