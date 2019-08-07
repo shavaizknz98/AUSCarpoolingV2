@@ -58,6 +58,7 @@ public class UserMainPageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_main_page);
+
         getSupportActionBar().setTitle("Main Page");
         getSupportActionBar().setBackgroundDrawable(getDrawable(R.color.colorAccent));
         mAuth = FirebaseAuth.getInstance();

@@ -19,6 +19,7 @@ public class SplashscreenActivity extends Activity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
+    private int backButtonCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,7 @@ public class SplashscreenActivity extends Activity {
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
         mAuth = FirebaseAuth.getInstance();
+        backButtonCount =0;
         userAutoLogin();
 
     }
@@ -40,12 +42,12 @@ public class SplashscreenActivity extends Activity {
                 if (user != null) {
                     //user is signed in
                     //if user is signed in then go to main menu directly
-                    Intent gotoUserMainMenu = new Intent(SplashscreenActivity.this, UserMainPageActivity.class);
+                    Intent gotoUserMainMenu = new Intent(getApplicationContext(), UserMainPageActivity.class);
                     gotoUserMainMenu.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(gotoUserMainMenu);
                     finish();
                 }else{
-                    Intent gotoSignIn = new Intent(SplashscreenActivity.this, MainActivity.class);
+                    Intent gotoSignIn = new Intent(getApplicationContext(), MainActivity.class);
                     gotoSignIn.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(gotoSignIn);
                     finish();
@@ -66,6 +68,22 @@ public class SplashscreenActivity extends Activity {
         super.onStop();
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(backButtonCount >= 1)
+        {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(this, "Press the back button once again to close the application.", Toast.LENGTH_SHORT).show();
+            backButtonCount++;
         }
     }
 }
