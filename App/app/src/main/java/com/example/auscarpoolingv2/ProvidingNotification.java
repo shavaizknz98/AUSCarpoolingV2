@@ -18,11 +18,13 @@ import static androidx.core.content.ContextCompat.getSystemService;
 public class ProvidingNotification {
     private Context mContext;
     private NotificationCompat.Builder builder;
-    private String CHANNEL_ID = "provide_notification_channel";
+    private NotificationChannel channel;
+    private NotificationManager notificationManager;
+    private String CHANNEL_ID = "Provide Notification Channel";
     private String CONTENT_TITLE = "AUS Carpooling";
     private String CONTENT_TEXT = "You are currently providing a ride";
     private String BIG_TEXT ="To stop providing rides, click on the App and click on \"Stop Providing\"";
-    private String CHANNEL_NAME = "providing_notifications";
+    private String CHANNEL_NAME = "Providing a ride notification";
     private String CHANNEL_DESCRIPTION ="to remind users that they are still providing rides on the application";
 
     public ProvidingNotification(Context context){
@@ -38,6 +40,7 @@ public class ProvidingNotification {
                 .setContentIntent(pendingIntent)
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(BIG_TEXT))
+                .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         createNotificationChannel();
 
@@ -48,18 +51,26 @@ public class ProvidingNotification {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance);
-            channel.setDescription("to remind users that they are still providing rides on the application");
+            channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance);
+            channel.setDescription("To remind users that they are still providing rides on the application");
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
-            NotificationManager notificationManager = (NotificationManager) getSystemService(mContext, NotificationManager.class);
+            notificationManager = (NotificationManager) getSystemService(mContext, NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
     }
     public void showNotification(){
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
-
-// notificationId is a unique int for each notification that you must define
+        // notificationId is a unique int for each notification that you must define
         notificationManager.notify(001, builder.build());
     }
+
+    public void deleteNotificationChannel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(mContext, NotificationManager.class);
+            notificationManager.deleteNotificationChannel(CHANNEL_ID);
+        }
+
+    }
+
 }

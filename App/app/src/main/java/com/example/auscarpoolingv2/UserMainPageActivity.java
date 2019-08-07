@@ -6,18 +6,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import com.example.auscarpoolingv2.BuildConfig;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -37,11 +35,13 @@ public class UserMainPageActivity extends AppCompatActivity {
 
     private Button btnFindRide, btnProvideRide, btnEditProfile, btnHelp, btnSignOut, btnRateDriver;
     private TextView welcomeUser;
+    private TextView verNumTextView;
     private int backButtonCount =0;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference mDatabase;
+    private ProvidingNotification providingNotification;
     private Button btnStopProviding;
     String current_user, fullname;
     String userID;
@@ -63,6 +63,7 @@ public class UserMainPageActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         current_user = mAuth.getCurrentUser().getUid();
+        providingNotification = new ProvidingNotification(UserMainPageActivity.this);
         FirebaseUser fUser = mAuth.getCurrentUser();
         userID = fUser.getUid();
 
@@ -76,6 +77,7 @@ public class UserMainPageActivity extends AppCompatActivity {
         btnSignOut = (Button) findViewById(R.id.signOutMPButton);
         btnStopProviding = (Button) findViewById(R.id.stopProvidingBtn);
         welcomeUser = (TextView) findViewById(R.id.welcomeBackText);
+        verNumTextView = (TextView) findViewById(R.id.versionTextView);
         mProgress.setMessage("Just a moment, Setting up the App for you");
         mProgress.setCancelable(false);
         mProgress.show();
@@ -87,6 +89,7 @@ public class UserMainPageActivity extends AppCompatActivity {
         btnProvideRide.setVisibility(View.GONE);
         btnSignOut.setVisibility(View.GONE);
         btnStopProviding.setVisibility(View.GONE);
+        verNumTextView.setVisibility(View.GONE);
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -100,8 +103,7 @@ public class UserMainPageActivity extends AppCompatActivity {
                     Double myRating = Math.floor(user.getRating() * 100)/100;
                     if(user.isProviding()){
                         btnStopProviding.setVisibility(View.VISIBLE);
-                        ProvidingNotification pn = new ProvidingNotification(UserMainPageActivity.this);
-                        pn.showNotification();
+                        providingNotification.showNotification();
 
                     }else{
                         btnStopProviding.setVisibility(View.GONE);
@@ -117,6 +119,8 @@ public class UserMainPageActivity extends AppCompatActivity {
                 btnHelp.setVisibility(View.VISIBLE);
                 btnProvideRide.setVisibility(View.VISIBLE);
                 btnSignOut.setVisibility(View.VISIBLE);
+                verNumTextView.setText(BuildConfig.VERSION_NAME);
+                verNumTextView.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -145,6 +149,7 @@ public class UserMainPageActivity extends AppCompatActivity {
                 DatabaseReference current_user_db = mDatabase.child("Users").child(user_id);
                 current_user_db.child("providing").setValue(false);
                 Toast.makeText(UserMainPageActivity.this, "Not Providing a Ride Anymore", Toast.LENGTH_SHORT).show();
+                providingNotification.deleteNotificationChannel();
             }
         });
         btnHelp.setOnClickListener(new View.OnClickListener() {
