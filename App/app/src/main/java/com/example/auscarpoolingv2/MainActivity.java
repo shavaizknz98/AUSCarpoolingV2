@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnSignIn;
     private Button btnSignUp;
     private CheckBox checkBox;
+    private int backButtonCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
         mProgress.setCancelable(false);
         mAuth = FirebaseAuth.getInstance();
         mForgotPassword = (TextView) findViewById(R.id.forgotPassword);
+        backButtonCount =0;
         mForgotPassword.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
 
@@ -174,6 +175,22 @@ public class MainActivity extends AppCompatActivity {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
+    @Override
+    public void onBackPressed() {
+        if(backButtonCount >= 1)
+        {
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(this, "Press the back button once again to close the application.", Toast.LENGTH_SHORT).show();
+            backButtonCount++;
+        }
+    }
+
 
     //make a toast
     private void makeToast(String msg) {

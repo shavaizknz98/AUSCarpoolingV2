@@ -171,6 +171,7 @@ public class UserMainPageActivity extends AppCompatActivity {
                 Intent backtoMainActivity = new Intent(UserMainPageActivity.this, MainActivity.class);
                 backtoMainActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(backtoMainActivity);
+                finish();
             }
         });
         btnEditProfile.setOnClickListener(new View.OnClickListener() {
