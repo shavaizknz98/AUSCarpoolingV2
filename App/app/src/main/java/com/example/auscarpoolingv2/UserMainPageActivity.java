@@ -33,7 +33,7 @@ public class UserMainPageActivity extends AppCompatActivity {
 
     public static final String TAG = "UserMainPage";
 
-    private Button btnFindRide, btnProvideRide, btnEditProfile, btnHelp, btnSignOut, btnRateDriver;
+    private Button btnFindRide, btnProvideRide, btnEditProfile , btnHelp, btnSignOut, btnRateDriver;
     private TextView welcomeUser;
     private TextView verNumTextView;
     private int backButtonCount =0;
@@ -70,8 +70,8 @@ public class UserMainPageActivity extends AppCompatActivity {
 
         mProgress = new ProgressDialog(this);
 
-        btnEditProfile = (Button) findViewById(R.id.editProfileButton);
         btnFindRide = (Button) findViewById(R.id.findRideButton);
+        btnEditProfile = (Button) findViewById(R.id.editProfileButton);
         btnProvideRide = (Button) findViewById(R.id.provideRideButton);
         btnRateDriver = (Button) findViewById(R.id.rateDriverBtn);
         btnHelp = (Button) findViewById(R.id.helpButton);
@@ -84,10 +84,11 @@ public class UserMainPageActivity extends AppCompatActivity {
         mProgress.show();
 
         btnRateDriver.setVisibility(View.GONE);
-        btnEditProfile.setVisibility(View.GONE);
         btnFindRide.setVisibility(View.GONE);
+
         btnHelp.setVisibility(View.GONE);
         btnProvideRide.setVisibility(View.GONE);
+        btnEditProfile.setVisibility(View.GONE);
         btnSignOut.setVisibility(View.GONE);
         btnStopProviding.setVisibility(View.GONE);
         verNumTextView.setVisibility(View.GONE);
@@ -115,8 +116,8 @@ public class UserMainPageActivity extends AppCompatActivity {
                 mProgress.dismiss();
 
                 btnRateDriver.setVisibility(View.VISIBLE);
-                btnEditProfile.setVisibility(View.VISIBLE);
                 btnFindRide.setVisibility(View.VISIBLE);
+                btnEditProfile.setVisibility(View.VISIBLE);
                 btnHelp.setVisibility(View.VISIBLE);
                 btnProvideRide.setVisibility(View.VISIBLE);
                 btnSignOut.setVisibility(View.VISIBLE);
@@ -141,6 +142,13 @@ public class UserMainPageActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent toFindRide = new Intent(UserMainPageActivity.this, FindRideActivity.class);
                 startActivity(toFindRide);
+            }
+        });
+        btnEditProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int unicode = 0x1F60A;
+                makeToast("This feature will be added soon " + ("\ud83d\ude01"));
             }
         });
         btnStopProviding.setOnClickListener(new View.OnClickListener() {
@@ -173,14 +181,6 @@ public class UserMainPageActivity extends AppCompatActivity {
                 backtoMainActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(backtoMainActivity);
                 finish();
-            }
-        });
-        btnEditProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent toEditProfile = new Intent(UserMainPageActivity.this, EditProfileActivity.class);
-                toEditProfile.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(toEditProfile);
             }
         });
 
