@@ -31,7 +31,6 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "DebugMain";
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private ProgressDialog mProgress;
     private TextView mForgotPassword;
 
@@ -81,29 +80,6 @@ public class MainActivity extends AppCompatActivity {
                     });}
                 mProgress.dismiss();
             }});
-
-        mProgress.show();
-        mProgress.setMessage("Checking Account...");
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                //go to register page if user is null?
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    //user is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in" + user.getUid());
-                    makeToast("Signed in with " + user.getEmail());
-                    //if user is signed in then go to main menu directly
-                    Intent gotoUserMainMenu = new Intent(MainActivity.this, UserMainPageActivity.class);
-                    gotoUserMainMenu.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    mProgress.dismiss();
-                    startActivity(gotoUserMainMenu);
-                }
-                mProgress.dismiss();
-            }
-
-
-        };
 
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -162,19 +138,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-    }
     @Override
     public void onBackPressed() {
         if(backButtonCount >= 1)
