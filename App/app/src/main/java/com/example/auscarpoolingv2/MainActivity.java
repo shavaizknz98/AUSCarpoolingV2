@@ -90,11 +90,12 @@ public class MainActivity extends AppCompatActivity {
                 if (!isChecked) {
                     // show password
                     mPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
                 } else {
                     // hide password
                     mPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-
                 }
+                mPassword.setSelection(mPassword.getText().length());
             }
         });
 

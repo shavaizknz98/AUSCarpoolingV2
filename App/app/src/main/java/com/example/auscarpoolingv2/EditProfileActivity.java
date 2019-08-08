@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.TranslateAnimation;
@@ -65,6 +66,7 @@ public class EditProfileActivity extends AppCompatActivity {
         emailText.setHint("Old email address");
         final EditText passwordText = new EditText(EditProfileActivity.this);
         passwordText.setHint("Password");
+        passwordText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         final EditText updatedEmailText = new EditText(EditProfileActivity.this);
         updatedEmailText.setHint("Enter updated email");
         LinearLayout layout = new LinearLayout(EditProfileActivity.this);
