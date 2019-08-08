@@ -117,7 +117,7 @@ public class UserMainPageActivity extends AppCompatActivity {
 
                 btnRateDriver.setVisibility(View.VISIBLE);
                 btnFindRide.setVisibility(View.VISIBLE);
-                btnEditProfile.setVisibility(View.VISIBLE);
+                // EDIT PROFILE UNDER CONSTRUCTION//btnEditProfile.setVisibility(View.VISIBLE);
                 btnHelp.setVisibility(View.VISIBLE);
                 btnProvideRide.setVisibility(View.VISIBLE);
                 btnSignOut.setVisibility(View.VISIBLE);
