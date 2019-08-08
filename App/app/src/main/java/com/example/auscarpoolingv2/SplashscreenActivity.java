@@ -1,14 +1,10 @@
 package com.example.auscarpoolingv2;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,7 +13,6 @@ import com.google.firebase.auth.FirebaseUser;
 public class SplashscreenActivity extends Activity {
 
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private ProgressBar progressBar;
     private FirebaseAuth mAuth;
     private int backButtonCount;
 
@@ -25,8 +20,6 @@ public class SplashscreenActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splashscreen);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.VISIBLE);
         mAuth = FirebaseAuth.getInstance();
         backButtonCount =0;
         userAutoLogin();

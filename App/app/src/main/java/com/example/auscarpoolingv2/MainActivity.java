@@ -21,6 +21,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.CycleInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -104,8 +106,16 @@ public class MainActivity extends AppCompatActivity {
 
                 mProgress.setMessage("Signing In");
                 mProgress.show();
-                if (mEmail.getText().toString().trim().isEmpty() || mPassword.getText().toString().trim().isEmpty()){
-                    makeToast("Please enter a valid email and password!");
+                if (mEmail.getText().toString().trim().isEmpty()){
+                    makeToast("Please enter a valid email");
+                    mEmail.startAnimation(shakeError());
+                    mPassword.startAnimation(shakeError());
+                    mProgress.dismiss();
+                    return;
+                }
+                if(mPassword.getText().toString().trim().isEmpty()){
+                    makeToast("Please enter a valid email");
+                    mPassword.startAnimation(shakeError());
                     mProgress.dismiss();
                     return;
                 }else{
@@ -168,6 +178,13 @@ public class MainActivity extends AppCompatActivity {
         if(imm.isAcceptingText()) { // verify if the soft keyboard is open
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
+    }
+
+    public TranslateAnimation shakeError() {
+        TranslateAnimation shake = new TranslateAnimation(0, 10, 0, 0);
+        shake.setDuration(500);
+        shake.setInterpolator(new CycleInterpolator(7));
+        return shake;
     }
 
 }
